@@ -15,15 +15,14 @@ if __name__=='__main__':
     }
 
 
-    cap = cv.VideoCapture(1)
+    cap = cv.VideoCapture(0)
     while True:
         ret, frame = cap.read()
-        frame = cv.resize(frame, (1000,1000))
+        frame = cv.resize(frame, (800,600))
         cv.imshow("camera", frame)
         key = cv.waitKey(30) & 0xff
         if key == ord(' ') or key == ord('\n'):
-            rgb = cv.cvtColor(frame, cv.COLOR_BGR2RGB)
-            cv.imwrite(path,rgb)
+            cv.imwrite(path,frame)
             f = open(path, mode="rb+")
             file = {
                 "image_file": f
@@ -39,8 +38,16 @@ if __name__=='__main__':
                          (face_rec['left']+face_rec['width'],
                           face_rec['top']+face_rec['height']),
                          (255,0,0),2)
-            cv.putText(frame,"66666",(face_rec['left']+20,face_rec['top']-20),
-                       cv.FONT_HERSHEY_COMPLEX,2,(0,255,0),4)
+            cv.putText(frame,"Gender:"+attributes['gender']['value'],(face_rec['left']-50,face_rec['top']-90),
+                       cv.FONT_HERSHEY_COMPLEX_SMALL,2,(0,255,0),2)
+            cv.putText(frame,"Age:"+str(attributes['age']['value']),(face_rec['left']-50,face_rec['top']-130),
+                       cv.FONT_HERSHEY_COMPLEX_SMALL,2,(0,255,0),2)
+            cv.putText(frame,"Emotion:"+str(max(attributes['emotion'],key=attributes['emotion'].get)),
+                       (face_rec['left']-50,face_rec['top']-50),
+                       cv.FONT_HERSHEY_COMPLEX_SMALL,2,(0,255,0),2)
+            cv.putText(frame,"Beauty:"+str(attributes['beauty'][str(attributes['gender']['value']).lower()+"_score"]),
+                       ((face_rec['left']-50,face_rec['top']-10)),
+                       cv.FONT_HERSHEY_COMPLEX_SMALL,2,(0,255,0),2)
             cv.imshow("photo",frame)
         if key == ord('q'):
             break
